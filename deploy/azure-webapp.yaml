@@ -1,0 +1,26 @@
+# Azure App Service deploy example
+# Use this as a reference for app settings and environment variables.
+
+name: medi-ai-webapp
+
+resources:
+  - type: Microsoft.Web/sites
+    name: medi-ai-webapp
+    kind: app,linux
+    properties:
+      serverFarmId: /subscriptions/<subscription-id>/resourceGroups/<resource-group>/providers/Microsoft.Web/serverfarms/<plan-name>
+      siteConfig:
+        linuxFxVersion: 'PYTHON|3.12'
+        appSettings:
+          - name: ENVIRONMENT
+            value: production
+          - name: APP_NAME
+            value: MediAI
+          - name: DATABASE_URL
+            value: postgres://<user>:<password>@<host>:5432/medi_ai
+          - name: JWT_SECRET
+            value: <set-a-long-random-secret>
+          - name: JWT_ALGORITHM
+            value: HS256
+          - name: AI_MODE
+            value: mock

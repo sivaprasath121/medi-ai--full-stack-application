@@ -1,0 +1,53 @@
+name: MediAI Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: Run smoke tests
+        run: python scripts/smoke_test.py
+
+  deploy-render:
+    needs: smoke
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger render deploy
+        run: |
+          echo "Render deployment should be triggered via Render dashboard or Render API using DATABASE_URL and JWT_SECRET secrets."
+
+  deploy-azure:
+    needs: smoke
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure deployment note
+        run: |
+          echo "Azure App Service deployment should use App Settings: DATABASE_URL, JWT_SECRET, ENVIRONMENT, APP_NAME."
+
+  deploy-railway:
+    needs: smoke
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Railway deployment note
+        run: |
+          echo "Railway deployment should use Railway variables for DATABASE_URL, JWT_SECRET, and runtime environment settings."
